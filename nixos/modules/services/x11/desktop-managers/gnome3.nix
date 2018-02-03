@@ -60,7 +60,7 @@ in {
         example = literalExample "[ pkgs.gnome3.gpaste ]";
         description = "Additional list of packages to be added to the session search path.
                        Useful for gnome shell extensions or gsettings-conditionated autostart.";
-        apply = list: list ++ [ pkgs.gnome3.gnome_shell pkgs.gnome3.gnome-shell-extensions ];
+        apply = list: list ++ [ pkgs.gnome3.gnome_shell pkgs.gnome3.gnome-shell-extensions pkgs.gnome3.gnome_session ];
       };
 
       extraGSettingsOverrides = mkOption {
@@ -73,6 +73,7 @@ in {
         default = [];
         type = types.listOf types.path;
         description = "List of packages for which gsettings are overridden.";
+        apply = list: list ++ [ pkgs.gnome3.gnome_session ];
       };
 
       debug = mkEnableOption "gnome-session debug messages";
@@ -161,7 +162,7 @@ in {
           # Update user dirs as described in http://freedesktop.org/wiki/Software/xdg-user-dirs/
           ${pkgs.xdg-user-dirs}/bin/xdg-user-dirs-update
 
-          ${pkgs.gnome3.gnome_session}/bin/gnome-session ${optionalString cfg.debug "--debug"} &
+          XDG_SESSION_TYPE=wayland ${pkgs.gnome3.gnome_session}/bin/gnome-session ${optionalString cfg.debug "--debug"} --wayland &
           waitPID=$!
         '';
       };

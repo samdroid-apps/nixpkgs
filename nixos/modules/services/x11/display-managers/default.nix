@@ -99,13 +99,13 @@ let
       # This is required by user units using the session bus.
       ${config.systemd.package}/bin/systemctl --user import-environment DISPLAY XAUTHORITY DBUS_SESSION_BUS_ADDRESS
 
-      # Load X defaults.
-      ${xorg.xrdb}/bin/xrdb -merge ${xresourcesXft}
-      if test -e ~/.Xresources; then
-          ${xorg.xrdb}/bin/xrdb -merge ~/.Xresources
-      elif test -e ~/.Xdefaults; then
-          ${xorg.xrdb}/bin/xrdb -merge ~/.Xdefaults
-      fi
+      #XSession Load X defaults.
+      # ${xorg.xrdb}/bin/xrdb -merge ${xresourcesXft}
+      # if test -e ~/.Xresources; then
+      #    ${xorg.xrdb}/bin/xrdb -merge ~/.Xresources
+      # elif test -e ~/.Xdefaults; then
+      #    ${xorg.xrdb}/bin/xrdb -merge ~/.Xdefaults
+      # fi
 
       # Speed up application start by 50-150ms according to
       # http://kdemonkey.blogspot.nl/2008/04/magic-trick.html
@@ -129,13 +129,13 @@ let
       ${config.systemd.package}/bin/systemctl --user start graphical-session.target
 
       # Allow the user to setup a custom session type.
-      if test -x ~/.xsession; then
-          exec ~/.xsession
-      else
-          if test "$sessionType" = "custom"; then
-              sessionType="" # fall-thru if there is no ~/.xsession
-          fi
-      fi
+      #if test -x ~/.xsession; then
+      #    exec ~/.xsession
+      #else
+      #    if test "$sessionType" = "custom"; then
+      #        sessionType="" # fall-thru if there is no ~/.xsession
+      #    fi
+      #fi
 
       # The session type is "<desktop-manager>+<window-manager>", so
       # extract those (see:
@@ -185,12 +185,12 @@ let
       allowSubstitutes = false;
     }
     ''
-      mkdir -p "$out"
+      mkdir -p "$out/wayland-sessions/"
       ${concatMapStrings (n: ''
-        cat - > "$out/${n}.desktop" << EODESKTOP
+        cat - > "$out/wayland-sessions/${n}.desktop" << EODESKTOP
         [Desktop Entry]
         Version=1.0
-        Type=XSession
+        Type=Application
         TryExec=${cfg.displayManager.session.script}
         Exec=${cfg.displayManager.session.script} "${n}"
         X-GDM-BypassXsession=true
